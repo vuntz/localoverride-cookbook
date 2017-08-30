@@ -1,0 +1,33 @@
+The goal of this cookbook is to allow customizing templates shipped by SUSE
+in other cookbooks, by "patching" them. For this, we actually override the
+template after it has been defined. To have this work, we need a couple of
+things:
+
+ - Include the update templates in the templates/default/ directory of this
+   cookbook and modify the recipe to make sure that the resources for the
+   template are using the right source (see examples below). You can also
+   change variables passed to the templates, to change the template based on
+   logic in this recipe or inside the template.
+
+ - Re-upload the cookbook with this command:
+       knife cookbook upload -o /opt/dell/chef/cookbooks localoverride
+
+ - Edit the nodes for which you want to override things so that they use this
+   recipe. You can do this on all nodes if desired, and use code in the
+   recipe to do actions only if relevant on that node (see examples below).
+   To achieve this, run "knife node edit $node", go at the bottom, and add at
+   the end of the run_list the following (keep the quotes):
+       "recipe[localoverride::default]"
+
+WARNING WARNING WARNING
+
+If you use as a basis templates from the existing cookbooks, it is critical
+to keep them in sync with the source. So when an update is out, you must
+check that your overriding template is up-to-date with the updated template
+from the original cookbook.
+
+WARNING WARNING WARNING WARNING WARNING WARNING
+
+Everything that you put in this cookbook (this recipe, but also templates and
+more) might be captured in supportconfigs. So please be careful about secrets
+such as passwords, keys, etc.
